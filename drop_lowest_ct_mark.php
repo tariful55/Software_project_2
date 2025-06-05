@@ -81,5 +81,7 @@ if ($result->num_rows > 0) {
     echo "শিক্ষার্থীদের কোনো রেকর্ড পাওয়া যায়নি।";
 }
 
+header("Location: CLO_PLO.php");
+exit();
 $conn->close();
 ?>

@@ -310,7 +310,7 @@ if ($numberOfStudents > 0) {
 //Drop the lowest CT mark
 include 'drop_lowest_ct_mark.php';
 
-header("Location: process_CT_Mark.php"); // Redirect to the initial_CT_Mark.php page
+// header("Location: process_CT_Mark.php"); // Redirect to the initial_CT_Mark.php page
 // --- Close Database Connection ---
 $conn->close();
 echo "Script finished.<br>"; // Debugging output

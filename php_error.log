@@ -113,3 +113,19 @@ Stack trace:
 #0 C:\xampp\htdocs\3100_project\Upload_CT_Mark.php(315): mysqli->close()
 #1 {main}
   thrown in C:\xampp\htdocs\3100_project\Upload_CT_Mark.php on line 315
+[05-Jun-2025 06:10:19 Europe/Berlin] PHP Warning:  include(db_connection.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:10:19 Europe/Berlin] PHP Warning:  include(): Failed opening 'db_connection.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:13:42 Europe/Berlin] PHP Warning:  include(db_connection.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:13:42 Europe/Berlin] PHP Warning:  include(): Failed opening 'db_connection.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:17:53 Europe/Berlin] PHP Warning:  include(db_connection.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:17:53 Europe/Berlin] PHP Warning:  include(): Failed opening 'db_connection.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:29:01 Europe/Berlin] PHP Warning:  include(db_connection.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:29:01 Europe/Berlin] PHP Warning:  include(): Failed opening 'db_connection.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:29:21 Europe/Berlin] PHP Warning:  include(db_connection.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:29:21 Europe/Berlin] PHP Warning:  include(): Failed opening 'db_connection.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:38:36 Europe/Berlin] PHP Warning:  include(db_connection.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:38:36 Europe/Berlin] PHP Warning:  include(): Failed opening 'db_connection.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:40:01 Europe/Berlin] PHP Warning:  include(db_connection.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:40:01 Europe/Berlin] PHP Warning:  include(): Failed opening 'db_connection.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:45:55 Europe/Berlin] PHP Warning:  include(db_connection.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
+[05-Jun-2025 06:45:55 Europe/Berlin] PHP Warning:  include(): Failed opening 'db_connection.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\3100_project\drop_lowest_ct_mark.php on line 6
