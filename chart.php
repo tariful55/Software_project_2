@@ -88,7 +88,7 @@ $conn->close();
 <body>
 
     <div class="back-button">
-        <a href="index.php">← Back to Dashboard</a>
+        <a href="index.html">← Back to Dashboard</a>
     </div>
 
     <h1>CLO & PLO Charts</h1>
