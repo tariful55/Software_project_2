@@ -84,5 +84,11 @@ for ($i = 0; $i < $total_students; $i++) {
     }
 }
 
-echo "Semester marks uploaded successfully.";
+
+//include 'CLO_PLO.php';
+include 'load_clo_plo_mark.php' ; // Load CLO and PLO marks
+echo "Semester marks uploaded successfully.<br><b>Redirecting to edit page...</b>";
+
+// Redirect after 2 seconds
+echo '<meta http-equiv="refresh" content="2;url=Edit_Sem_mark.php">';
 ?>

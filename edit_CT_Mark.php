@@ -1,7 +1,7 @@
 <?php
 // fetch_data_CT_Mark.php
 include 'db_connect.php';
-
+include 'nab_bar.php';
 // Fetch existing data from DB table ece2217
 $sql = "SELECT * FROM ece2217 WHERE Roll IN (0,1,2) OR Roll >= 100 ORDER BY Roll ASC";
 $result = $conn->query($sql);
@@ -71,7 +71,7 @@ button:hover {
 </head>
 <body>
 
-<h2>Upload Assessment Data</h2>
+<h2>Edit CT Marks</h2>
 
 <form action="Upload_CT_Mark.php" method="POST">
   <table>
@@ -181,7 +181,7 @@ button:hover {
     </tbody>
   </table>
 
-  <button type="submit">Upload Data</button>
+  <button type="submit">Update Data</button>
 </form>
 
 </body>

@@ -1,0 +1,364 @@
+<?php
+include "db_connect.php";
+include 'nab_bar.php';
+// CLOs and PLOs
+$clo_columns = ['CLO1', 'CLO2', 'CLO3', 'CLO4', 'CLO5'];
+$plo_columns = ['PLO1', 'PLO2', 'PLO3', 'PLO4', 'PLO5', 'PLO6', 'PLO7', 'PLO8', 'PLO9', 'PLO10', 'PLO11', 'PLO12'];
+
+$performance_levels = [
+    'Exemplary' => 0,
+    'Satisfactory' => 0,
+    'Developing' => 0,
+    'Unsatisfactory' => 0
+];
+
+// Classification function
+function classify_percentage($percent) {
+    if ($percent >= 80) return 'Exemplary';
+    elseif ($percent >= 60) return 'Satisfactory';
+    elseif ($percent >= 40) return 'Developing';
+    else return 'Unsatisfactory';
+}
+
+// Fetch totals
+$total_query = "SELECT * FROM clo_plo_summary WHERE Roll='Total'";
+$total_result = mysqli_query($conn, $total_query);
+$total_row = mysqli_fetch_assoc($total_result);
+
+// Fetch students
+$students_query = "SELECT * FROM clo_plo_summary WHERE Roll != 'Total'";
+$students_result = mysqli_query($conn, $students_query);
+$total_students = mysqli_num_rows($students_result);
+
+// Helper to process CLO/PLOs
+function get_performance_percent($columns, $students_result, $total_row, $total_students) {
+    global $performance_levels;
+
+    $performance_counts = [];
+    foreach ($columns as $col) {
+        $performance_counts[$col] = $performance_levels;
+    }
+
+    mysqli_data_seek($students_result, 0); // Reset pointer
+
+    while ($student = mysqli_fetch_assoc($students_result)) {
+        foreach ($columns as $col) {
+            $score = floatval($student[$col]);
+            $max = floatval($total_row[$col]);
+            if ($max == 0) continue;
+            $percent = ($score / $max) * 100;
+            $cat = classify_percentage($percent);
+            $performance_counts[$col][$cat]++;
+        }
+    }
+
+    $performance_percent = [];
+    foreach ($columns as $col) {
+        $performance_percent[$col] = [];
+        foreach ($performance_levels as $level => $_) {
+            $count = $performance_counts[$col][$level];
+            $performance_percent[$col][$level] = $total_students > 0 ? round(($count / $total_students) * 100, 1) : 0;
+        }
+    }
+
+    return $performance_percent;
+}
+
+// Remove columns that have all 0% in performance
+function filter_nonzero_columns($performance_percent, $columns) {
+    $filtered = [];
+    foreach ($columns as $col) {
+        $all_zero = true;
+        foreach ($performance_percent[$col] as $val) {
+            if ($val > 0) {
+                $all_zero = false;
+                break;
+            }
+        }
+        if (!$all_zero) {
+            $filtered[] = $col;
+        }
+    }
+    return $filtered;
+}
+
+// Prepare chart datasets with distinct colors and border
+function prepare_chart_data($columns, $performance_percent) {
+    $levels = ['Exemplary', 'Satisfactory', 'Developing', 'Unsatisfactory'];
+
+    $colors = [
+        'Exemplary' => 'rgba(77, 191, 0, 0.85)',        // bright green
+        'Satisfactory' => 'rgba(0, 168, 255, 0.85)',    // bright blue
+        'Developing' => 'rgba(255, 193, 7, 0.85)',      // amber
+        'Unsatisfactory' => 'rgba(255, 87, 87, 0.85)'   // light red
+    ];
+
+    $borderColors = [
+        'Exemplary' => 'rgba(50, 255, 50, 1)',
+        'Satisfactory' => 'rgba(0, 255, 255, 1)',
+        'Developing' => 'rgba(255, 215, 0, 1)',
+        'Unsatisfactory' => 'rgba(255, 99, 132, 1)'
+    ];
+
+    $chart_data = [];
+    foreach ($levels as $level) {
+        $data = [];
+        foreach ($columns as $col) {
+            $data[] = $performance_percent[$col][$level];
+        }
+        $chart_data[] = [
+            'label' => $level,
+            'data' => $data,
+            'backgroundColor' => $colors[$level],
+            'borderColor' => $borderColors[$level],
+            'borderWidth' => 1.5
+        ];
+    }
+    return $chart_data;
+}
+
+// Helper for table generation
+function render_table($columns, $performance_percent) {
+    global $performance_levels;
+
+    echo "<table border='1' cellpadding='5' style='border-collapse:collapse; width:60%; margin-bottom:30px'>";
+    echo "<tr><th>Level</th>";
+    foreach ($columns as $col) {
+        echo "<th>$col</th>";
+    }
+    echo "</tr>";
+
+    foreach (array_keys($performance_levels) as $level) {
+        echo "<tr><td>$level</td>";
+        foreach ($columns as $col) {
+            echo "<td>" . $performance_percent[$col][$level] . "</td>";
+        }
+        echo "</tr>";
+    }
+
+    echo "<tr><td><strong>Total</strong></td>";
+    foreach ($columns as $_) {
+        echo "<td>100.0</td>";
+    }
+    echo "</tr>";
+    echo "</table>";
+}
+
+// === Process CLO and PLO ===
+$clo_performance_percent = get_performance_percent($clo_columns, $students_result, $total_row, $total_students);
+$plo_performance_percent = get_performance_percent($plo_columns, $students_result, $total_row, $total_students);
+
+// Filter columns with no performance
+$clo_columns = filter_nonzero_columns($clo_performance_percent, $clo_columns);
+$plo_columns = filter_nonzero_columns($plo_performance_percent, $plo_columns);
+
+// Rebuild chart data with filtered columns
+$clo_chart_data = prepare_chart_data($clo_columns, $clo_performance_percent);
+$plo_chart_data = prepare_chart_data($plo_columns, $plo_performance_percent);
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CLO & PLO Performance Summary</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Body and general text */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 30px 0;
+            background-color: #000; /* black */
+            color: #fff; /* bright white text */
+        }
+
+        /* Headings */
+        h2 {
+            text-align: center;
+            margin-top: 40px;
+            color: #4dbf00; /* green */
+            font-size: 2rem;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        /* Chart container */
+        .chart-container {
+            width: 90%;
+            max-width: 900px;
+            margin: auto;
+            overflow-x: auto;
+        }
+
+        /* Chart canvas */
+        canvas {
+            background: #111; /* very dark background */
+            border: 2px solid #4dbf00; /* green border */
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        /* Table */
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            background-color: #111; /* dark */
+            color: #fff; /* white text */
+            box-shadow: 0 0 10px rgba(77, 191, 0, 0.3);
+        }
+
+        /* Table cells */
+        th, td {
+            padding: 10px 15px;
+            border: 1px solid #4dbf00; /* green lines */
+            text-align: center;
+            color: #fff; /* white text */
+        }
+
+        /* Table headers */
+        th {
+            background-color: #4dbf00;
+            color: #000;
+        }
+
+        /* Alternate row background */
+        tr:nth-child(even) td {
+            background-color: #1a1a1a;
+        }
+
+        tr:nth-child(odd) td {
+            background-color: #111;
+        }
+
+        tr:hover td {
+            background-color: #222;
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .chart-container, table {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="section">
+    <h2>CLO Performance Table</h2>
+    <?php render_table($clo_columns, $clo_performance_percent); ?>
+</div>
+
+<div class="section">
+    <h2>CLO Performance Chart</h2>
+    <div class="chart-container">
+        <canvas id="cloChart"></canvas>
+    </div>
+</div>
+
+<div class="section">
+    <h2>PLO Performance Table</h2>
+    <?php render_table($plo_columns, $plo_performance_percent); ?>
+</div>
+
+<div class="section">
+    <h2>PLO Performance Chart</h2>
+    <div class="chart-container">
+        <canvas id="ploChart"></canvas>
+    </div>
+</div>
+
+<script>
+    const cloLabels = <?php echo json_encode($clo_columns); ?>;
+    const ploLabels = <?php echo json_encode($plo_columns); ?>;
+    const cloDatasets = <?php echo json_encode($clo_chart_data); ?>;
+    const ploDatasets = <?php echo json_encode($plo_chart_data); ?>;
+
+    const commonOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#fff', // white legend text
+                    font: { size: 14 }
+                }
+            },
+            tooltip: {
+                enabled: true,
+                backgroundColor: '#333',
+                titleColor: '#fff',
+                bodyColor: '#fff'
+            }
+        },
+        scales: {
+            x: {
+                stacked: true,
+                title: {
+                    display: true,
+                    text: 'CLO / PLO',
+                    color: '#fff',
+                    font: { size: 16 }
+                },
+                ticks: {
+                    color: '#fff',
+                    font: { size: 14 }
+                },
+                grid: {
+                    color: '#4dbf00',
+                    borderColor: '#4dbf00'
+                }
+            },
+            y: {
+                stacked: true,
+                beginAtZero: true,
+                max: 100,
+                title: {
+                    display: true,
+                    text: 'Percentage (%)',
+                    color: '#fff',
+                    font: { size: 16 }
+                },
+                ticks: {
+                    color: '#fff',
+                    font: { size: 14 },
+                    stepSize: 10
+                },
+                grid: {
+                    color: '#4dbf00',
+                    borderColor: '#4dbf00'
+                }
+            }
+        }
+    };
+
+    // CLO Chart
+    const ctxCLO = document.getElementById('cloChart').getContext('2d');
+    const cloChart = new Chart(ctxCLO, {
+        type: 'bar',
+        data: {
+            labels: cloLabels,
+            datasets: cloDatasets
+        },
+        options: commonOptions
+    });
+
+    // PLO Chart
+    const ctxPLO = document.getElementById('ploChart').getContext('2d');
+    const ploChart = new Chart(ctxPLO, {
+        type: 'bar',
+        data: {
+            labels: ploLabels,
+            datasets: ploDatasets
+        },
+        options: commonOptions
+    });
+</script>
+
+</body>
+</html>
+

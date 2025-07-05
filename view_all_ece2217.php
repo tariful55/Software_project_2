@@ -1,6 +1,6 @@
 <?php
 include 'db_connect.php';
-
+include 'nab_bar.php';
 echo "<!DOCTYPE html>
 <html lang='en'>
 <head>

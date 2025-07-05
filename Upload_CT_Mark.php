@@ -1,6 +1,5 @@
 <?php
 include 'db_connect.php'; // Your database connection file
-
 // --- Enable Error Reporting (for debugging) ---
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -308,10 +307,15 @@ if ($numberOfStudents > 0) {
 }
 
 //Drop the lowest CT mark
-include 'drop_lowest_ct_mark.php';
 
-// header("Location: process_CT_Mark.php"); // Redirect to the initial_CT_Mark.php page
+//include 'CLO_PLO.php'; // Include CLO and PLO processing
+include 'load_clo_plo_mark.php' ; // Load CLO and PLO marks
+//echo '<meta http-equiv="refresh" content="2;url=edit_CT_Mark.php">';
+include 'drop_lowest_ct_mark.php';
+ header("Location: edit_CT_Mark.php"); // Redirect to the edit__CT_Mark.php page
 // --- Close Database Connection ---
 $conn->close();
-echo "Script finished.<br>"; // Debugging output
+echo "Script finished.<br>Redirecting"; // Debugging output
+
+
 ?>

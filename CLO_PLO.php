@@ -71,6 +71,6 @@ if ($result->num_rows > 0) {
 $conn->close();
 
 // শেষে redirect করবো process_CT_Mark.php-তে
-header("Location: process_CT_Mark.php");
+
 exit();
 ?>
