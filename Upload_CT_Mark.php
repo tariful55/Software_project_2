@@ -310,9 +310,9 @@ if ($numberOfStudents > 0) {
 
 //include 'CLO_PLO.php'; // Include CLO and PLO processing
 include 'load_clo_plo_mark.php' ; // Load CLO and PLO marks
-//echo '<meta http-equiv="refresh" content="2;url=edit_CT_Mark.php">';
+echo '<meta http-equiv="refresh" content="1;url=edit_CT_Mark.php">';
 include 'drop_lowest_ct_mark.php';
- header("Location: edit_CT_Mark.php"); // Redirect to the edit__CT_Mark.php page
+ //header("Location: edit_CT_Mark.php"); // Redirect to the edit__CT_Mark.php page
 // --- Close Database Connection ---
 $conn->close();
 echo "Script finished.<br>Redirecting"; // Debugging output
