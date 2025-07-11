@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marks Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            background-color: #1e1e1e;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #4dbf00;
+            margin-bottom: 20px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .nav-item {
+            background-color: #4dbf00;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding: 15px 25px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .nav-item:hover {
+            background-color: #45a100;
+            transform: scale(1.05);
+        }
+
+        .nav-item:active {
+            transform: scale(0.98);
+        }
+
+        .nav-item:focus {
+            outline: none;
+        }
+
+        @media (max-width: 768px) {
+            .navigation {
+                flex-direction: column;
+            }
+
+            .nav-item {
+                width: 100%;
+                margin: 10px 0;
+                padding: 15px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Marks Dashboard</h1>
+        <div class="navigation">
+            <!-- <a href="add_course_ece2217.php" class="nav-item">Create Table</a> -->
+            <a href="initial_CT_Mark.php" class="nav-item">Start By CT Marks</a>
+            <a href="edit_CT_Mark.php" class="nav-item">Update CT Marks</a>
+            <a href="Upload_Sem_mark.php" class="nav-item">Upload Semester Marks</a>
+            <a href="edit_Sem_Mark.php" class="nav-item">Update Semester Marks</a>
+            <a href="view_all_ece2217.php" class="nav-item">Show Full table</a>
+            <a href="final_table.php" class="nav-item">Show CLO & PLO Graph</a>
+	    
+        </div>
+    </div>
+</body>
+</html>
