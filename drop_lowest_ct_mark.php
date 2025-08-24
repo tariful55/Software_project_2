@@ -1,11 +1,16 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+session_start();
+$table = $_SESSION['selected_course'];
+
+
 
 include 'db_connect.php';
 
 // Select students with Roll >= 2000000
-$sql = "SELECT * FROM ece2217 WHERE Roll >= 2000000";
+$sql = "SELECT * FROM `$table` WHERE Roll >= 2000000";
+// ...
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -42,7 +47,8 @@ if ($result->num_rows > 0) {
             $update_parts[] = "$col = 0";
         }
 
-        $update_sql = "UPDATE ece2217 SET " . implode(', ', $update_parts) . " WHERE Roll = $roll";
+        $update_sql = "UPDATE `$table` SET " . implode(', ', $update_parts) . " WHERE Roll = $roll";
+        
 
         if ($conn->query($update_sql) === TRUE) {
             echo "Roll $roll: $min_ct dropped<br>";

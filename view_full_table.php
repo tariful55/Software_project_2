@@ -1,11 +1,18 @@
 <?php
-include 'db_connect.php';
 include 'nab_bar.php';
+$table = $_SESSION['selected_course'];
+
+// use in updates:
+$sql = "UPDATE `$table` SET ... WHERE roll = 0";
+// and so on
+
+include 'db_connect.php';
+
 echo "<!DOCTYPE html>
 <html lang='en'>
 <head>
   <meta charset='UTF-8'>
-  <title>All Semester Marks - ece2217</title>
+  <title>All Semester Marks - `$table`</title>
   <style>
     body { font-family: Arial; background-color: #1e1e1e; color: #fff; padding: 20px; }
     table { border-collapse: collapse; width: 100%; background-color: #2e2e2e; box-shadow: 0 0 10px #4dbf00; }
@@ -15,9 +22,9 @@ echo "<!DOCTYPE html>
   </style>
 </head>
 <body>
-<h2>ece2217 - Semester Data Overview</h2>";
+<br><br><br>";
 
-$result = mysqli_query($conn, "SELECT * FROM ece2217 ORDER BY roll ASC");
+$result = mysqli_query($conn, "SELECT * FROM `$table` ORDER BY roll ASC");
 
 if (mysqli_num_rows($result) > 0) {
     echo "<table><thead><tr>";

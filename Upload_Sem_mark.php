@@ -1,140 +1,98 @@
 <?php
+session_start();
+$table = $_SESSION['selected_course'];
+
+
 include 'db_connect.php';
 
-$result = mysqli_query($conn, "SELECT roll, name FROM ece2217 WHERE roll NOT IN (0, 1, 2)");
-$students = [];
-while ($row = mysqli_fetch_assoc($result)) {
-    $students[] = $row;
+// 1. Store metadata for roll 0 (CLO)
+$clo_updates = [];
+for ($i = 17; $i <= 48; $i++) {
+    $field = "c{$i}_clo";
+    if (isset($_POST[$field])) {
+        $value = mysqli_real_escape_string($conn, $_POST[$field]);
+        $clo_updates[] = "c{$i} = '$value'";
+    }
 }
+if (!empty($clo_updates)) {
+    $sql = "UPDATE `$table` SET " . implode(", ", $clo_updates) . " WHERE roll = 0";
+    mysqli_query($conn, $sql);
+}
+
+// 2. Store metadata for roll 1 (PLO)
+$plo_updates = [];
+for ($i = 17; $i <= 48; $i++) {
+    $field = "c{$i}_plo";
+    if (isset($_POST[$field])) {
+        $value = mysqli_real_escape_string($conn, $_POST[$field]);
+        $plo_updates[] = "c{$i} = '$value'";
+    }
+}
+if (!empty($plo_updates)) {
+    $sql = "UPDATE `$table` SET " . implode(", ", $plo_updates) . " WHERE roll = 1";
+    mysqli_query($conn, $sql);
+}
+
+// 3. Store metadata for roll 2 (Full Marks)
+$full_updates = [];
+for ($i = 17; $i <= 48; $i++) {
+    $field = "c{$i}_full";
+    if (isset($_POST[$field]) && $_POST[$field] !== '') {
+        $value = floatval($_POST[$field]);
+        $full_updates[] = "c{$i} = $value";
+    } else {
+        $full_updates[] = "c{$i} = NULL";
+    }
+}
+if (!empty($full_updates)) {
+    $sql = "UPDATE `$table` SET " . implode(", ", $full_updates) . " WHERE roll = 2";
+    mysqli_query($conn, $sql);
+}
+
+// 4. Store student data from sXXX fields
+$field_data = $_POST;
+$field_keys = array_keys($field_data);
+$student_data = [];
+
+// Extract sXXX fields only
+foreach ($field_keys as $key) {
+    if (preg_match('/^s\d+$/', $key)) {
+        $student_data[] = $field_data[$key];
+    }
+}
+
+// Each student has 2 (roll + name) + 32 marks
+$columns_per_student = 34;
+$total_students = floor(count($student_data) / $columns_per_student);
+
+for ($i = 0; $i < $total_students; $i++) {
+    $base = $i * $columns_per_student;
+    $roll = mysqli_real_escape_string($conn, $student_data[$base]);
+    $name = mysqli_real_escape_string($conn, $student_data[$base + 1]);
+
+    $updates = [];
+    for ($j = 0; $j < 32; $j++) {
+        $mark = trim($student_data[$base + 2 + $j]);
+        $col = "c" . (17 + $j);
+        if ($mark === '') {
+            $updates[] = "$col = NULL";
+        } else {
+            $val = floatval($mark);
+            $updates[] = "$col = $val";
+        }
+    }
+
+    if (!empty($updates)) {
+        $sql = "UPDATE `$table` SET " . implode(", ", $updates) . " WHERE roll = '$roll'";
+        mysqli_query($conn, $sql);
+    }
+}
+
+
+//include 'CLO_PLO.php';
+include 'load_clo_plo_mark.php' ; // Load CLO and PLO marks
+echo "Semester marks uploaded successfully.<br><b>Redirecting to edit page...</b>";
+
+// Redirect after 2 seconds
+echo '<meta http-equiv="refresh" content="2;url=Edit_Sem_mark.php">';
 ?>
-
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Semester Assessment Upload</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #121212;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: #1e1e1e;
-    }
-    th, td {
-      border: 1px solid #4caf50;
-      padding: 8px;
-      text-align: center;
-    }
-    th {
-      background: #2e2e2e;
-      color: #4caf50;
-    }
-    input, select {
-      background: #333;
-      color: white;
-      border: none;
-      padding: 5px;
-      width: 60px;
-      text-align: center;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #4caf50;
-      border: none;
-      font-size: 16px;
-      margin-top: 20px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-
-<h2>Semester Assessment Form</h2>
-
-<form action="upload_semester_process.php" method="POST">
-  <table>
-    <thead>
-      <tr>
-        <th>Roll</th>
-        <th>Name</th>
-        <?php for ($i = 1; $i <= 8; $i++): ?>
-          <th colspan="4">Q<?= $i ?></th>
-        <?php endfor; ?>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <?php for ($i = 1; $i <= 32; $i++): ?>
-          <td>Q<?= $i ?></td>
-        <?php endfor; ?>
-      </tr>
-    </thead>
-    <tbody>
-
-      <!-- CLO row -->
-      <tr>
-        <td>0</td>
-        <td><input type="text" name="row_0_name" value="CLO"></td>
-        <?php for ($i = 17; $i <= 48; $i++): ?>
-          <td>
-            <select name="c<?= $i ?>_clo">
-              <?php for ($j = 1; $j <= 5; $j++): ?>
-                <option value="<?= $j ?>">CO-<?= $j ?></option>
-              <?php endfor; ?>
-            </select>
-          </td>
-        <?php endfor; ?>
-      </tr>
-
-      <!-- PLO row -->
-      <tr>
-        <td>1</td>
-        <td><input type="text" name="row_1_name" value="PLO"></td>
-        <?php for ($i = 17; $i <= 48; $i++): ?>
-          <td>
-            <select name="c<?= $i ?>_plo">
-              <?php for ($j = 1; $j <= 12; $j++): ?>
-                <option value="<?= $j ?>">PO-<?= $j ?></option>
-              <?php endfor; ?>
-            </select>
-          </td>
-        <?php endfor; ?>
-      </tr>
-
-      <!-- Full Marks row -->
-      <tr>
-        <td>2</td>
-        <td><input type="text" name="row_2_name" value="Full Marks"></td>
-        <?php for ($i = 17; $i <= 48; $i++): ?>
-          <td><input type="number" name="c<?= $i ?>_full" min="0"></td>
-        <?php endfor; ?>
-      </tr>
-
-      <!-- Student rows -->
-      <?php
-        $field_counter = 102; // skip s0 to s101 for 3 metadata rows
-        foreach ($students as $index => $stu):
-      ?>
-        <tr>
-          <td><input type="text" name="s<?= $field_counter++ ?>" value="<?= $stu['roll'] ?>"></td>
-          <td><input type="text" name="s<?= $field_counter++ ?>" value="<?= $stu['name'] ?>"></td>
-          <?php for ($i = 17; $i <= 48; $i++): ?>
-            <td><input type="number" name="s<?= $field_counter++ ?>" step="0.01" min="0"></td>
-          <?php endfor; ?>
-        </tr>
-      <?php endforeach; ?>
-
-    </tbody>
-  </table>
-
-  <button type="submit">Submit Semester Marks</button>
-</form>
-
-</body>
-</html>

@@ -1,9 +1,13 @@
 <?php
+session_start();
+$table = $_SESSION['selected_course'];
+
+
 // Update_Sem_mark.php
 include 'db_connect.php';
 include 'nab_bar.php';
 // Fetch data from table
-$sql = "SELECT * FROM ece2217 WHERE Roll IN (0,1,2) OR Roll >= 100 ORDER BY Roll ASC";
+$sql = "SELECT * FROM `$table` WHERE Roll IN (0,1,2) OR Roll >= 100 ORDER BY Roll ASC";
 $result = $conn->query($sql);
 
 $data = [];
@@ -73,7 +77,7 @@ button:hover {
 
 <h2>Edit Semester Marks</h2>
 
-<form action="upload_semester_process.php" method="POST">
+<form action="upload_sem_mark.php" method="POST">
   <table>
     <thead>
       <tr>

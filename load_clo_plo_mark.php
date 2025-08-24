@@ -1,10 +1,14 @@
 <?php
+session_start();
+$table = $_SESSION['selected_course'];
+
+
 include "db_connect.php";
 
 // Fetch all rows from ece2217
-$query = "SELECT * FROM ece2217";
+$query = "SELECT * FROM `$table`";
 $result = mysqli_query($conn, $query);
-mysqli_query($conn, "Delete from clo_plo_summary"); // Clear previous summary
+mysqli_query($conn, "DELETE FROM summ_{$_SESSION['selected_course']}"); // Clear previous summary
 $rows = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $rows[] = $row;
@@ -63,8 +67,9 @@ $all_values = array_merge(array_values($clo_totals), array_values($plo_totals));
 
 $columns_sql = implode(", ", $all_keys);
 $values_sql = implode(", ", $all_values);
+$insert_sql = "INSERT INTO summ_{$_SESSION['selected_course']} (Roll, Name, $columns_sql) VALUES ('Total', 'Marks', $values_sql);";
 
-$insert_sql = "INSERT INTO clo_plo_summary (Roll, Name, $columns_sql) VALUES ('Total', 'Marks', $values_sql);";
+
 
 if (!mysqli_query($conn, $insert_sql)) {
     die("Error inserting total marks row: " . mysqli_error($conn));
@@ -103,7 +108,7 @@ for ($i = 3; $i < count($rows); $i++) {  // start after first 3 control rows
     $student_values_sql = implode(", ", $student_all_values);
 
     // Prepare insert for this student
-    $student_insert_sql = "INSERT INTO clo_plo_summary (Roll, Name, $student_columns_sql) VALUES ('$roll', '$name', $student_values_sql);";
+    $student_insert_sql = "INSERT INTO summ_{$_SESSION['selected_course']} (Roll, Name, $student_columns_sql) VALUES ('$roll', '$name', $student_values_sql);";
 
     if (!mysqli_query($conn, $student_insert_sql)) {
         echo "Error inserting student $roll: " . mysqli_error($conn) . "<br>";

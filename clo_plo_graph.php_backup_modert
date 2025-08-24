@@ -21,12 +21,13 @@ function classify_percentage($percent) {
 }
 
 // Fetch totals
-$total_query = "SELECT * FROM clo_plo_summary WHERE Roll='Total'";
+$total_query = "SELECT * FROM summ_{$_SESSION['selected_course']} WHERE Roll='Total'";
+
 $total_result = mysqli_query($conn, $total_query);
 $total_row = mysqli_fetch_assoc($total_result);
 
 // Fetch students
-$students_query = "SELECT * FROM clo_plo_summary WHERE Roll != 'Total'";
+$students_query = "SELECT * FROM summ_{$_SESSION['selected_course']} WHERE Roll != 'Total'";
 $students_result = mysqli_query($conn, $students_query);
 $total_students = mysqli_num_rows($students_result);
 
@@ -82,14 +83,22 @@ function filter_nonzero_columns($performance_percent, $columns) {
     return $filtered;
 }
 
-// Prepare chart datasets
+// Prepare chart datasets with distinct colors and border
 function prepare_chart_data($columns, $performance_percent) {
     $levels = ['Exemplary', 'Satisfactory', 'Developing', 'Unsatisfactory'];
+
     $colors = [
-        'Exemplary' => 'rgba(75, 192, 192, 0.7)',
-        'Satisfactory' => 'rgba(54, 162, 235, 0.7)',
-        'Developing' => 'rgba(255, 206, 86, 0.7)',
-        'Unsatisfactory' => 'rgba(255, 99, 132, 0.7)'
+        'Exemplary' => 'rgba(77, 191, 0, 0.85)',        // bright green
+        'Satisfactory' => 'rgba(0, 168, 255, 0.85)',    // bright blue
+        'Developing' => 'rgba(255, 193, 7, 0.85)',      // amber
+        'Unsatisfactory' => 'rgba(255, 87, 87, 0.85)'   // light red
+    ];
+
+    $borderColors = [
+        'Exemplary' => 'rgba(50, 255, 50, 1)',
+        'Satisfactory' => 'rgba(0, 255, 255, 1)',
+        'Developing' => 'rgba(255, 215, 0, 1)',
+        'Unsatisfactory' => 'rgba(255, 99, 132, 1)'
     ];
 
     $chart_data = [];
@@ -101,7 +110,9 @@ function prepare_chart_data($columns, $performance_percent) {
         $chart_data[] = [
             'label' => $level,
             'data' => $data,
-            'backgroundColor' => $colors[$level]
+            'backgroundColor' => $colors[$level],
+            'borderColor' => $borderColors[$level],
+            'borderWidth' => 1.5
         ];
     }
     return $chart_data;
@@ -152,92 +163,90 @@ $plo_chart_data = prepare_chart_data($plo_columns, $plo_performance_percent);
 <head>
     <title>CLO & PLO Performance Summary</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-    /* General body styling */
-    body {
-        font-family: 'Roboto', sans-serif;
-        margin: 0;
-        padding: 30px 0;
-        background-color: #000; /* Black background */
-        color: #fff; /* White text */
-    }
-
-    /* Section headers */
-    h2 {
-        text-align: center;
-        margin-top: 40px;
-        color: #4dbf00; /* Green accent */
-        font-size: 2rem;
-    }
-
-    /* Wrapper section */
-    .section {
-        margin-bottom: 60px;
-        text-align: center;
-    }
-
-    /* Chart canvas container */
-    .chart-container {
-        width: 90%;
-        max-width: 900px;
-        margin: auto;
-        overflow-x: auto;
-    }
-
-    /* Chart canvas styling */
-    canvas {
-        background: #111; /* Dark background for canvas */
-        border: 2px solid #4dbf00; /* Green border */
-        padding: 10px;
-        border-radius: 8px;
-        margin-top: 20px;
-    }
-
-    /* Table styling */
-    table {
-        margin: auto;
-        border-collapse: collapse;
-        background-color: #111; /* Dark background for tables */
-        color: #fff; /* White text */
-        box-shadow: 0 0 10px rgba(77, 191, 0, 0.3); /* Green glow effect */
-    }
-
-    /* Table cells */
-    th, td {
-        padding: 10px 15px;
-        border: 1px solid #4dbf00; /* Green lines */
-        text-align: center;
-    }
-
-    /* Table headers */
-    th {
-        background-color: #4dbf00; /* Green header */
-        color: #000; /* Black text in header for contrast */
-    }
-
-    /* Row coloring for better separation */
-    tr:nth-child(even) td {
-        background-color: #1a1a1a;
-    }
-
-    tr:nth-child(odd) td {
-        background-color: #111;
-    }
-
-    tr:hover td {
-        background-color: #222;
-    }
-
-    /* Responsive handling */
-    @media screen and (max-width: 768px) {
-        .chart-container, table {
-            width: 100% !important;
+    <style>
+        /* Body and general text */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 30px 0;
+            background-color: #000; /* black */
+            color: #fff; /* bright white text */
         }
-    }
-</style>
 
+        /* Headings */
+        h2 {
+            text-align: center;
+            margin-top: 40px;
+            color: #4dbf00; /* green */
+            font-size: 2rem;
+        }
 
+        /* Sections */
+        .section {
+            margin-bottom: 60px;
+            text-align: center;
+        }
 
+        /* Chart container */
+        .chart-container {
+            width: 90%;
+            max-width: 900px;
+            margin: auto;
+            overflow-x: auto;
+        }
+
+        /* Chart canvas */
+        canvas {
+            background: #111; /* very dark background */
+            border: 2px solid #4dbf00; /* green border */
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        /* Table */
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            background-color: #111; /* dark */
+            color: #fff; /* white text */
+            box-shadow: 0 0 10px rgba(77, 191, 0, 0.3);
+        }
+
+        /* Table cells */
+        th, td {
+            padding: 10px 15px;
+            border: 1px solid #4dbf00; /* green lines */
+            text-align: center;
+            color: #fff; /* white text */
+        }
+
+        /* Table headers */
+        th {
+            background-color: #4dbf00;
+            color: #000;
+        }
+
+        /* Alternate row background */
+        tr:nth-child(even) td {
+            background-color: #1a1a1a;
+        }
+
+        tr:nth-child(odd) td {
+            background-color: #111;
+        }
+
+        tr:hover td {
+            background-color: #222;
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .chart-container, table {
+                width: 100% !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -266,39 +275,88 @@ $plo_chart_data = prepare_chart_data($plo_columns, $plo_performance_percent);
 </div>
 
 <script>
-    const cloCtx = document.getElementById('cloChart').getContext('2d');
-    const ploCtx = document.getElementById('ploChart').getContext('2d');
+    const cloLabels = <?php echo json_encode($clo_columns); ?>;
+    const ploLabels = <?php echo json_encode($plo_columns); ?>;
+    const cloDatasets = <?php echo json_encode($clo_chart_data); ?>;
+    const ploDatasets = <?php echo json_encode($plo_chart_data); ?>;
 
-    const cloChart = new Chart(cloCtx, {
-        type: 'bar',
-        data: {
-            labels: <?php echo json_encode($clo_columns); ?>,
-            datasets: <?php echo json_encode($clo_chart_data); ?>
+    const commonOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#fff', // white legend text
+                    font: { size: 14 }
+                }
+            },
+            tooltip: {
+                enabled: true,
+                backgroundColor: '#333',
+                titleColor: '#fff',
+                bodyColor: '#fff'
+            }
         },
-        options: {
-            responsive: true,
-            plugins: { legend: { position: 'top' }},
-            scales: {
-                y: { beginAtZero: true, max: 100, title: { display: true, text: 'Percentage (%)' }},
-                x: { title: { display: true, text: 'CLOs' }}
+        scales: {
+            x: {
+                stacked: true,
+                title: {
+                    display: true,
+                    text: 'CLO / PLO',
+                    color: '#fff',
+                    font: { size: 16 }
+                },
+                ticks: {
+                    color: '#fff',
+                    font: { size: 14 }
+                },
+                grid: {
+                    color: '#4dbf00',
+                    borderColor: '#4dbf00'
+                }
+            },
+            y: {
+                stacked: true,
+                beginAtZero: true,
+                max: 100,
+                title: {
+                    display: true,
+                    text: 'Percentage (%)',
+                    color: '#fff',
+                    font: { size: 16 }
+                },
+                ticks: {
+                    color: '#fff',
+                    font: { size: 14 },
+                    stepSize: 10
+                },
+                grid: {
+                    color: '#4dbf00',
+                    borderColor: '#4dbf00'
+                }
             }
         }
+    };
+
+    // CLO Chart
+    const ctxCLO = document.getElementById('cloChart').getContext('2d');
+    const cloChart = new Chart(ctxCLO, {
+        type: 'bar',
+        data: {
+            labels: cloLabels,
+            datasets: cloDatasets
+        },
+        options: commonOptions
     });
 
-    const ploChart = new Chart(ploCtx, {
+    // PLO Chart
+    const ctxPLO = document.getElementById('ploChart').getContext('2d');
+    const ploChart = new Chart(ctxPLO, {
         type: 'bar',
         data: {
-            labels: <?php echo json_encode($plo_columns); ?>,
-            datasets: <?php echo json_encode($plo_chart_data); ?>
+            labels: ploLabels,
+            datasets: ploDatasets
         },
-        options: {
-            responsive: true,
-            plugins: { legend: { position: 'top' }},
-            scales: {
-                y: { beginAtZero: true, max: 100, title: { display: true, text: 'Percentage (%)' }},
-                x: { title: { display: true, text: 'PLOs' }}
-            }
-        }
+        options: commonOptions
     });
 </script>
 

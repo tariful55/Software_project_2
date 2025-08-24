@@ -161,3 +161,63 @@ Stack trace:
 [05-Jul-2025 14:08:45 Europe/Berlin] PHP Warning:  include(): Failed opening 'db_connection.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 6
 [05-Jul-2025 14:09:58 Europe/Berlin] PHP Warning:  include(db_connection.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 6
 [05-Jul-2025 14:09:58 Europe/Berlin] PHP Warning:  include(): Failed opening 'db_connection.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 6
+[09-Jul-2025 20:44:43 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[09-Jul-2025 20:44:43 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[09-Jul-2025 20:47:55 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[09-Jul-2025 20:47:55 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[09-Jul-2025 20:48:01 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[09-Jul-2025 20:48:01 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[09-Jul-2025 21:29:59 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[09-Jul-2025 21:29:59 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'project_3100.clo_plo_summary' doesn't exist in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php:11
+Stack trace:
+#0 C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php(11): mysqli_query(Object(mysqli), 'Delete from clo...')
+#1 C:\xampp\htdocs\Sem_project\Upload_CT_Mark.php(314): include('C:\\xampp\\htdocs...')
+#2 {main}
+  thrown in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 11
+[09-Jul-2025 21:32:40 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[09-Jul-2025 21:32:40 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'project_3100.clo_plo_summary' doesn't exist in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php:113
+Stack trace:
+#0 C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php(113): mysqli_query(Object(mysqli), 'INSERT INTO clo...')
+#1 C:\xampp\htdocs\Sem_project\Upload_CT_Mark.php(314): include('C:\\xampp\\htdocs...')
+#2 {main}
+  thrown in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 113
+[09-Jul-2025 21:32:53 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[09-Jul-2025 21:32:53 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'project_3100.clo_plo_summary' doesn't exist in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php:113
+Stack trace:
+#0 C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php(113): mysqli_query(Object(mysqli), 'INSERT INTO clo...')
+#1 C:\xampp\htdocs\Sem_project\Upload_CT_Mark.php(314): include('C:\\xampp\\htdocs...')
+#2 {main}
+  thrown in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 113
+[09-Jul-2025 21:33:44 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[09-Jul-2025 21:33:45 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[09-Jul-2025 21:35:15 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[09-Jul-2025 21:35:15 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[09-Jul-2025 21:54:37 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[09-Jul-2025 21:54:37 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[09-Jul-2025 21:58:02 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[09-Jul-2025 21:58:02 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[10-Jul-2025 09:34:45 Europe/Berlin] No student data rows found in POST based on 'sX' keys.
+[10-Jul-2025 09:34:45 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[10-Jul-2025 09:34:45 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[10-Jul-2025 09:35:23 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[10-Jul-2025 09:35:23 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[10-Jul-2025 09:35:50 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[10-Jul-2025 09:35:50 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[10-Jul-2025 09:47:27 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[10-Jul-2025 09:47:27 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[12-Jul-2025 08:24:22 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[12-Jul-2025 08:24:22 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[12-Jul-2025 09:26:30 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[12-Jul-2025 09:26:30 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[12-Jul-2025 09:28:29 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[12-Jul-2025 09:28:29 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[15-Jul-2025 09:07:50 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[15-Jul-2025 09:07:50 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[15-Jul-2025 09:08:07 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[15-Jul-2025 09:08:07 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[15-Jul-2025 09:08:15 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[15-Jul-2025 09:08:15 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[15-Jul-2025 09:08:31 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[15-Jul-2025 09:08:31 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4
+[15-Jul-2025 09:09:24 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\load_clo_plo_mark.php on line 2
+[15-Jul-2025 09:09:24 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\Sem_project\drop_lowest_ct_mark.php on line 4

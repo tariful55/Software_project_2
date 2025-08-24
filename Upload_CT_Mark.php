@@ -1,4 +1,6 @@
 <?php
+session_start();
+$table = $_SESSION['selected_course'];
 include 'db_connect.php'; // Your database connection file
 // --- Enable Error Reporting (for debugging) ---
 error_reporting(E_ALL);
@@ -59,7 +61,7 @@ for ($i = 1; $i <= 16; $i++) {
 $clo_column_list = implode(', ', $clo_column_names);
 $clo_update_clauses = implode(', ', array_map(function($col){ return "$col = VALUES($col)"; }, $clo_column_names));
 
-$sql_clo = "INSERT INTO ece2217 (Roll, Name, $clo_column_list)
+$sql_clo = "INSERT INTO `$table` (Roll, Name, $clo_column_list)
             VALUES (?, ?, $clo_values_placeholders)
             ON DUPLICATE KEY UPDATE
             Name = VALUES(Name), $clo_update_clauses;";
@@ -108,7 +110,7 @@ for ($i = 1; $i <= 16; $i++) {
 $plo_column_list = implode(', ', $plo_column_names);
 $plo_update_clauses = implode(', ', array_map(function($col){ return "$col = VALUES($col)"; }, $plo_column_names));
 
-$sql_plo = "INSERT INTO ece2217 (Roll, Name, $plo_column_list)
+$sql_plo = "INSERT INTO `$table` (Roll, Name, $plo_column_list)
             VALUES (?, ?, $plo_values_placeholders)
             ON DUPLICATE KEY UPDATE
             Name = VALUES(Name), $plo_update_clauses;";
@@ -156,7 +158,7 @@ for ($i = 1; $i <= 16; $i++) {
 $full_marks_column_list = implode(', ', $full_marks_column_names);
 $full_marks_update_clauses = implode(', ', array_map(function($col){ return "$col = VALUES($col)"; }, $full_marks_column_names));
 
-$sql_full_marks = "INSERT INTO ece2217 (Roll, Name, $full_marks_column_list)
+$sql_full_marks = "INSERT INTO `$table` (Roll, Name, $full_marks_column_list)
                    VALUES (?, ?, $full_marks_values_placeholders)
                    ON DUPLICATE KEY UPDATE
                    Name = VALUES(Name), $full_marks_update_clauses;";
@@ -234,7 +236,7 @@ if ($numberOfStudents > 0) {
     $update_list = implode(', ', array_map(function($col){ return "$col = VALUES($col)"; }, $table_columns));
 
     // Prepare the statement outside the loop for efficiency
-    $sql_student = "INSERT INTO ece2217 (Roll, Name, $column_list)
+    $sql_student = "INSERT INTO `$table` (Roll, Name, $column_list)
                     VALUES (?, ?, $placeholders)
                     ON DUPLICATE KEY UPDATE
                     Name = VALUES(Name), $update_list;";

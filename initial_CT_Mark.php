@@ -1,227 +1,214 @@
+<?php
+session_start();
+include 'db_connect.php';
+include 'nab_bar.php';
+
+$table = $_SESSION['selected_course'];
+
+$sql = "SELECT * FROM `$table` WHERE Roll IN (0,1,2) OR Roll >= 100 ORDER BY Roll ASC";
+$result = $conn->query($sql);
+
+$data = [];
+while ($row = $result->fetch_assoc()) {
+    $data[$row['Roll']] = $row;
+}
+$conn->close();
+
+function get_val($data, $roll, $col) {
+    return isset($data[$roll][$col]) ? htmlspecialchars($data[$roll][$col]) : '';
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Upload Assessment Data</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e1e;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    table {
+      width: 98%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: #2e2e2e;
+      box-shadow: 0 0 15px rgba(77, 191, 0, 0.7);
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #4dbf00;
+      text-align: center;
+    }
+    th {
+      background-color: #444;
+      color: #4dbf00;
+    }
+    select, input[type="number"], input[type="text"] {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 5px;
+      width: 100px;
+      font-size: 14px;
+      text-align: center;
+    }
+    button, .add-row-btn {
+      margin-top: 15px;
+      padding: 8px 16px;
+      background-color: #4dbf00;
+      color: black;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button:hover, .add-row-btn:hover {
+      background-color: #6fe000;
+    }
+    .control-box {
+      margin-bottom: 20px;
+    }
+    .control-box input {
+      width: 120px;
+      padding: 5px;
+      margin: 0 10px;
+    }
+  </style>
 </head>
 <body>
 
-<h2>Assessment Upload Form</h2>
+<h2>Upload Initial CT Marks</h2>
+
+<div class="control-box">
+  <label for="startRollInput">Starting Roll:</label>
+  <input type="number" id="startRollInput" value="2110001" min="1">
+  <label for="studentCountInput">Number of Students:</label>
+  <input type="number" id="studentCountInput" value="6" min="1">
+  <button type="button" onclick="generateRows()">Generate Rows</button>
+</div>
 
 <form action="Upload_CT_Mark.php" method="POST">
-  <table border="1" cellspacing="0" cellpadding="5">
+  <table id="marksTable">
     <thead>
       <tr>
         <th>Roll</th>
         <th>Name</th>
-        <th colspan="4">CT1</th>
-        <th colspan="4">CT2</th>
-        <th colspan="4">CT3</th>
-        <th colspan="4">CT4</th>
+        <?php for ($ct = 1; $ct <= 4; $ct++): ?>
+          <th colspan="4">CT<?= $ct ?></th>
+        <?php endfor; ?>
       </tr>
       <tr>
         <th></th>
         <th></th>
-        <th>Q1</th>
-        <th>Q2</th>
-        <th>Q3</th>
-        <th>Q4</th>
-        <th>Q1</th>
-        <th>Q2</th>
-        <th>Q3</th>
-        <th>Q4</th>
-        <th>Q1</th>
-        <th>Q2</th>
-        <th>Q3</th>
-        <th>Q4</th>
-        <th>Q1</th>
-        <th>Q2</th>
-        <th>Q3</th>
-        <th>Q4</th>
+        <?php for ($i = 1; $i <= 4 * 4; $i++): ?>
+          <th>Q<?= (($i - 1) % 4) + 1 ?></th>
+        <?php endfor; ?>
       </tr>
     </thead>
-    <tbody>
-      <!-- CLO row -->
+    <tbody id="marksBody">
+      <!-- CLO -->
       <tr>
-        <td>0</td>
-        <td><input type="text" name="row_0_name" value="CLO"></td>
-        <td></td><td></td><td></td><td></td>
-        <td></td><td></td><td></td><td></td>
-        <td></td><td></td><td></td><td></td>
-        <td></td><td></td><td></td><td></td>
+        <td>0<input type="hidden" name="roll_0" value="0"></td>
+        <td><input type="text" name="row_0_name" value="<?= get_val($data, 0, 'Name') ?: 'CLO' ?>" readonly></td>
+        <?php for ($i = 1; $i <= 16; $i++): 
+          $val = get_val($data, 0, "c$i"); ?>
+          <td>
+            <select name="ct<?= ceil($i / 4) ?>_q<?= ($i - 1) % 4 + 1 ?>_clo">
+              <?php for ($j = 1; $j <= 5; $j++): ?>
+                <option value="<?= $j ?>" <?= $val == $j ? 'selected' : '' ?>>CLO-<?= $j ?></option>
+              <?php endfor; ?>
+            </select>
+          </td>
+        <?php endfor; ?>
       </tr>
 
-      <!-- PLO row -->
+      <!-- PLO -->
       <tr>
-        <td>1</td>
-        <td><input type="text" name="row_1_name" value="PLO"></td>
-        <td></td><td></td><td></td><td></td>
-        <td></td><td></td><td></td><td></td>
-        <td></td><td></td><td></td><td></td>
-        <td></td><td></td><td></td><td></td>
+        <td>1<input type="hidden" name="roll_1" value="1"></td>
+        <td><input type="text" name="row_1_name" value="<?= get_val($data, 1, 'Name') ?: 'PLO' ?>" readonly></td>
+        <?php for ($i = 1; $i <= 16; $i++): 
+          $val = get_val($data, 1, "c$i"); ?>
+          <td>
+            <select name="ct<?= ceil($i / 4) ?>_q<?= ($i - 1) % 4 + 1 ?>_plo">
+              <?php for ($j = 1; $j <= 12; $j++): ?>
+                <option value="<?= $j ?>" <?= $val == $j ? 'selected' : '' ?>>PLO-<?= $j ?></option>
+              <?php endfor; ?>
+            </select>
+          </td>
+        <?php endfor; ?>
       </tr>
 
-      <!-- Full Marks row -->
+      <!-- Full Marks -->
       <tr>
-        <td>2</td>
-        <td><input type="text" name="row_2_name" value="Full Marks"></td>
-        <td><input type="number" name="ct1_q1_full"></td>
-        <td><input type="number" name="ct1_q2_full"></td>
-        <td><input type="number" name="ct1_q3_full"></td>
-        <td><input type="number" name="ct1_q4_full"></td>
-        <td><input type="number" name="ct2_q1_full"></td>
-        <td><input type="number" name="ct2_q2_full"></td>
-        <td><input type="number" name="ct2_q3_full"></td>
-        <td><input type="number" name="ct2_q4_full"></td>
-        <td><input type="number" name="ct3_q1_full"></td>
-        <td><input type="number" name="ct3_q2_full"></td>
-        <td><input type="number" name="ct3_q3_full"></td>
-        <td><input type="number" name="ct3_q4_full"></td>
-        <td><input type="number" name="ct4_q1_full"></td>
-        <td><input type="number" name="ct4_q2_full"></td>
-        <td><input type="number" name="ct4_q3_full"></td>
-        <td><input type="number" name="ct4_q4_full"></td>
+        <td>2<input type="hidden" name="roll_2" value="2"></td>
+        <td><input type="text" name="row_2_name" value="<?= get_val($data, 2, 'Name') ?: 'Full Marks' ?>" readonly></td>
+        <?php for ($i = 1; $i <= 16; $i++): 
+          $val = get_val($data, 2, "c$i"); ?>
+          <td><input type="number" name="q<?= $i ?>_full" value="<?= $val ?>" min="0" max="255"></td>
+        <?php endfor; ?>
       </tr>
+
+      <!-- Pre-existing students from DB -->
+      <?php
+      $studentRolls = array_filter(array_keys($data), fn($r) => $r >= 100);
+      sort($studentRolls);
+      $studentIndex = 1;
+
+      foreach ($studentRolls as $roll):
+      ?>
+      <tr>
+        <td><input type="text" name="s<?= $studentIndex ?>" value="<?= $roll ?>"></td>
+        <td><input type="text" name="s<?= $studentIndex + 1 ?>" value="<?= get_val($data, $roll, 'Name') ?>"></td>
+        <?php for ($i = 1; $i <= 16; $i++): 
+          $val = get_val($data, $roll, "c$i"); ?>
+          <td><input type="number" name="s<?= $studentIndex + 1 + $i ?>" value="<?= $val ?>" min="0" max="255"></td>
+        <?php endfor; ?>
+      </tr>
+      <?php $studentIndex += 18; endforeach; ?>
     </tbody>
   </table>
 
-  <button type="submit">Upload Data</but ton>
+  
+  <button type="button" class="add-row-btn" style="float:left;" onclick="addExtraRow()">+ Add Row</button>
+
+  <button type="submit">Save Students</button>
 </form>
 
 <script>
-window.onload = function () {
-    const table = document.querySelector("table");
-    const tableBody = document.querySelector("table tbody");
+let studentCounter = <?= $studentIndex ?>;
 
-    const startRoll = 2110001;
-    const numberOfStudents = 6;
-    const fields = ['ct1_q1','ct1_q2','ct1_q3','ct1_q4',
-                    'ct2_q1','ct2_q2','ct2_q3','ct2_q4',
-                    'ct3_q1','ct3_q2','ct3_q3','ct3_q4',
-                    'ct4_q1','ct4_q2','ct4_q3','ct4_q4']; // 16 fields
+function generateRows() {
+  const tbody = document.getElementById("marksBody");
+  const startRoll = parseInt(document.getElementById("startRollInput").value);
+  const count = parseInt(document.getElementById("studentCountInput").value);
 
-    function generateStudentRow(studentIndex, nameStartIndex) {
-        const roll = startRoll + studentIndex - 1;
-        let rowHtml = `<tr>`;
+  for (let i = 0; i < count; i++) {
+    addStudentRow(startRoll + i, `Student-${i + 1}`);
+  }
+}
 
-        // sX = Roll
-        rowHtml += `<td><input type="text" name="s${nameStartIndex}" value="${roll}"></td>`;
+function addExtraRow() {
+  addStudentRow('', '');
+}
 
-        // sX+1 = Name
-        rowHtml += `<td><input type="text" name="s${nameStartIndex + 1}" value="Stud-${studentIndex}"></td>`;
+function addStudentRow(roll, name) {
+  const tbody = document.getElementById("marksBody");
+  const row = document.createElement("tr");
 
-        // sX+2 to sX+17 = CT marks
-        for (let i = 0; i < fields.length; i++) {
-            const nameAttr = `s${nameStartIndex + 2 + i}`;
-            rowHtml += `<td><input type="number" name="${nameAttr}"></td>`;
-        }
+  row.innerHTML += `<td><input type="text" name="s${studentCounter}" value="${roll}"></td>`;
+  row.innerHTML += `<td><input type="text" name="s${studentCounter + 1}" value="${name}"></td>`;
 
-        rowHtml += `</tr>`;
-        return rowHtml;
-    }
+  for (let i = 0; i < 16; i++) {
+    row.innerHTML += `<td><input type="number" name="s${studentCounter + 2 + i}" value="" min="0" max="255"></td>`;
+  }
 
-    let allStudentRowsHtml = '';
-    let nameCounter = 1;
-
-    for (let i = 0; i < numberOfStudents; i++) {
-        allStudentRowsHtml += generateStudentRow(i + 1, nameCounter);
-        nameCounter += 18; // Move to next set of 18
-    }
-
-    tableBody.innerHTML += allStudentRowsHtml;
-
-    // CLO Select Row (row 2)
-    const cloRow = table.rows[2];
-    for (let i = 2; i < cloRow.cells.length; i++) {
-        const cell = cloRow.cells[i];
-        const select = document.createElement("select");
-        select.name = `ct${Math.floor((i - 2) / 4) + 1}_q${(i - 2) % 4 + 1}_clo`;
-
-        for (let j = 1; j <= 5; j++) {
-            const option = document.createElement("option");
-            option.value = `${j}`;
-            option.text = `CO-${j}`;
-            select.appendChild(option);
-        }
-
-        cell.innerHTML = '';
-        cell.appendChild(select);
-    }
-
-    // PLO Select Row (row 3)
-    const ploRow = table.rows[3];
-    for (let i = 2; i < ploRow.cells.length; i++) {
-        const cell = ploRow.cells[i];
-        const select = document.createElement("select");
-        select.name = `ct${Math.floor((i - 2) / 4) + 1}_q${(i - 2) % 4 + 1}_plo`;
-
-        for (let j = 1; j <= 12; j++) {
-            const option = document.createElement("option");
-            option.value = `${j}`;
-            option.text = `PO-${j}`;
-            select.appendChild(option);
-        }
-
-        cell.innerHTML = '';
-        cell.appendChild(select);
-    }
-};
+  studentCounter += 18;
+  tbody.appendChild(row);
+}
 </script>
-
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background-color: #1e1e1e;
-  color: #fff;
-  padding: 20px;
-  text-align: center;
-}
-
-table {
-  width: 98%;
-  margin: 20px auto;
-  border-collapse: collapse;
-  background-color: #2e2e2e;
-  box-shadow: 0 0 15px rgba(77, 191, 0, 0.7);
-}
-
-th, td {
-  padding: 10px;
-  border: 1px solid #4dbf00;
-  text-align: center;
-}
-
-th {
-  background-color: #444;
-  color: #4dbf00;
-}
-
-select, input[type="number"], input[type="text"] {
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 5px;
-  width: 60px;
-  font-size: 14px;
-  text-align: center;
-}
-
-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #4dbf00;
-  color: black;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #6fe000;
-}
-</style>
 
 </body>
 </html>

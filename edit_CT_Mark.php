@@ -1,9 +1,14 @@
 <?php
+session_start();
+$table = $_SESSION['selected_course'];
+
+// ...
+
 // fetch_data_CT_Mark.php
 include 'db_connect.php';
 include 'nab_bar.php';
 // Fetch existing data from DB table ece2217
-$sql = "SELECT * FROM ece2217 WHERE Roll IN (0,1,2) OR Roll >= 100 ORDER BY Roll ASC";
+$sql = "SELECT * FROM `$table` WHERE Roll IN (0,1,2) OR Roll >= 100 ORDER BY Roll ASC";
 $result = $conn->query($sql);
 
 $data = [];
@@ -72,7 +77,34 @@ button:hover {
 <body>
 
 <h2>Edit CT Marks</h2>
+<!--<div style="margin: 10px 0;">
+  <label><input type="checkbox" class="ct-toggle" data-ct="1" checked> CT1</label>
+  <label><input type="checkbox" class="ct-toggle" data-ct="2" checked> CT2</label>
+  <label><input type="checkbox" class="ct-toggle" data-ct="3" checked> CT3</label>
+  <label><input type="checkbox" class="ct-toggle" data-ct="4" checked> CT4</label>
+</div>
+<script>
+document.querySelectorAll('.ct-toggle').forEach(cb => {
+  cb.addEventListener('change', function() {
+    const ctNum = this.getAttribute('data-ct');
+    const show = this.checked;
 
+    // Target columns: every CT group is 4 columns
+    const colStart = 2 + (ctNum - 1) * 4; // Assuming Roll, Name come first
+    const table = document.querySelector("table");
+
+    for (let row of table.rows) {
+      for (let i = 0; i < 4; i++) {
+        const cell = row.cells[colStart + i];
+        if (cell) {
+          cell.style.display = show ? '' : 'none';
+        }
+      }
+    }
+  });
+});
+</script>
+-->
 <form action="Upload_CT_Mark.php" method="POST">
   <table>
     <thead>
